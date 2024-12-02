@@ -16,6 +16,7 @@ public class Day2P1 {
                 String currentLine = scanner.nextLine();
                 String[] levelsList = currentLine.split(" ");
                 boolean isSafe = isSafe(levelsList);
+                System.out.println(isSafe);
                 if (isSafe) {
                     totalOfSafeReports++;
                 }
@@ -27,33 +28,40 @@ public class Day2P1 {
     }
 
     private static boolean isSafe(String[] levelsList) {
-        int prevLevel = -1;
-        int isDecreasing = 0;
-        for (String s : levelsList) {
-            int currentLevel = Integer.parseInt(s);
-            if (prevLevel == -1) {
-                prevLevel = currentLevel;
-            } else {
-                if (isDecreasing == 0) {
-                    isDecreasing = prevLevel - currentLevel;
-                }
-                if (isDecreasing > 0) {
-                    int diff = prevLevel - currentLevel;
-                    if (diff <= 0 || diff > 3) {
-                        return false;
-                    }
-                } else if (isDecreasing < 0) {
-                    int diff = prevLevel - currentLevel;
-                    if (diff >= 0 || diff < -3) {
-                        return false;
-                    }
-                } else {
+        if ((Integer.parseInt(levelsList[0]) - Integer.parseInt(levelsList[1])) < 0) {
+            int prevRoof = Integer.parseInt(levelsList[0]) + ((levelsList.length - 1) * 3);
+            int prevFloor = Integer.parseInt(levelsList[0]) + (levelsList.length - 1);
+
+            for (int i = 0; i < levelsList.length; i++) {
+                int currentLevel = Integer.parseInt(levelsList[i]);
+                int roof = currentLevel + ((levelsList.length - i - 1) * 3);
+                int floor = currentLevel + (levelsList.length - i - 1);
+
+                if (roof > prevRoof || floor < prevFloor) {
                     return false;
+                } else {
+                    prevFloor = floor;
+                    prevRoof = roof;
                 }
             }
+        } else {
+            int prevFloor = Integer.parseInt(levelsList[0]) - ((levelsList.length - 1) * 3);
+            int prevRoof = Integer.parseInt(levelsList[0]) - (levelsList.length - 1);
 
-            prevLevel = currentLevel;
+            for (int i = 0; i < levelsList.length; i++) {
+                int currentLevel = Integer.parseInt(levelsList[i]);
+                int floor = currentLevel - ((levelsList.length - i - 1) * 3);
+                int roof = currentLevel - (levelsList.length - i - 1);
+
+                if (floor < prevFloor || roof > prevRoof) {
+                    return false;
+                } else {
+                    prevRoof = roof;
+                    prevFloor = floor;
+                }
+            }
         }
+
         return true;
     }
 }
