@@ -11,7 +11,6 @@ import java.util.regex.Pattern;
 
 public class Day4P1 {
     public static void main(String[] args) {
-        int total = 0;
         ArrayList<ArrayList<Character>> matrix = new ArrayList<>();
 
         try {
@@ -27,9 +26,8 @@ public class Day4P1 {
                 matrix.add(charList);
             }
 
-            findOccurrences(matrix);
+            System.out.println(findOccurrences(matrix));
 
-            System.out.println(total);
         } catch (FileNotFoundException e) {
             System.out.println(e);
         }
@@ -41,10 +39,21 @@ public class Day4P1 {
             ArrayList<Character> row = matrix.get(i);
             for (int j = 0; j < row.size(); j++) {
                 if (row.get(j) == 'X') {
-                    if (findNext('M', matrix, i, j)) {
-                        if (findNext('A', matrix, i, j)) {
-                            if (findNext('S', matrix, i, j)) {
-                                total++;
+                    for (ArrayList<Integer> MCoordinate : findNext('M', matrix, i, j)) {
+                        int x = i - MCoordinate.get(0);
+                        int y = j - MCoordinate.get(1);
+
+                        for (ArrayList<Integer> ACoordinate : findNext('A', matrix, MCoordinate.get(0), MCoordinate.get(1))) {
+                            int x2 = MCoordinate.get(0) - ACoordinate.get(0);
+                            int y2 = MCoordinate.get(1) - ACoordinate.get(1);
+                            if (x == x2 && y == y2) {
+                                for(ArrayList<Integer> SCoordinate : findNext('S', matrix, ACoordinate.get(0), ACoordinate.get(1))) {
+                                    int x3 = ACoordinate.get(0) - SCoordinate.get(0);
+                                    int y3 = ACoordinate.get(1) - SCoordinate.get(1);
+                                    if (x2 == x3 && y2 == y3) {
+                                        total++;
+                                    }
+                                }
                             }
                         }
                     }
@@ -54,7 +63,7 @@ public class Day4P1 {
         return total;
     }
 
-    private static boolean findNext(char toFind, ArrayList<ArrayList<Character>> matrix, int i, int j) {
+    private static ArrayList<ArrayList<Integer>> findNext(char toFind, ArrayList<ArrayList<Character>> matrix, int i, int j) {
         ArrayList<ArrayList<Integer>> coordinates = new ArrayList<>();
         if (i >= 1) {
             if (j >= 1) {
@@ -69,7 +78,7 @@ public class Day4P1 {
             coordinate2.add(j);
             coordinates.add(coordinate2);
 
-            if (j < matrix.getFirst().size()) {
+            if (j < matrix.getFirst().size() - 1) {
                 ArrayList<Integer> coordinate3 = new ArrayList<>();
                 coordinate3.add(i - 1);
                 coordinate3.add(j + 1);
@@ -83,13 +92,13 @@ public class Day4P1 {
             coordinate4.add(j - 1);
             coordinates.add(coordinate4);
         }
-        if (j < matrix.getFirst().size()) {
+        if (j < matrix.getFirst().size() - 1) {
             ArrayList<Integer> coordinate5 = new ArrayList<>();
             coordinate5.add(i);
             coordinate5.add(j + 1);
             coordinates.add(coordinate5);
         }
-        if (i < matrix.size()) {
+        if (i < matrix.size() - 1) {
             if (j >= 1) {
                 ArrayList<Integer> coordinate6 = new ArrayList<>();
                 coordinate6.add(i + 1);
@@ -101,21 +110,21 @@ public class Day4P1 {
             coordinate7.add(j);
             coordinates.add(coordinate7);
 
-            if (j < matrix.getFirst().size()) {
+            if (j < matrix.getFirst().size() - 1) {
                 ArrayList<Integer> coordinate8 = new ArrayList<>();
                 coordinate8.add(i + 1);
                 coordinate8.add(j + 1);
                 coordinates.add(coordinate8);
             }
         }
-        System.out.println(coordinates);
-
+        //System.out.println(coordinates);
+        ArrayList<ArrayList<Integer>> nextCoordinates = new ArrayList<>();
         for (ArrayList<Integer> integers : coordinates) {
             char toCheck = matrix.get(integers.getFirst()).get(integers.get(1));
             if (toCheck == toFind) {
-                return true;
+                nextCoordinates.add(integers);
             }
         }
-        return false;
+        return nextCoordinates;
     }
 }
