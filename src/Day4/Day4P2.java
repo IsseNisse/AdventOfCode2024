@@ -39,19 +39,20 @@ public class Day4P2 {
         for (int i = 0; i < matrix.size(); i++) {
             ArrayList<Character> row = matrix.get(i);
             for (int j = 0; j < row.size(); j++) {
-                if (row.get(j) == 'M') {
-                    for (ArrayList<Integer> ACoordinate : findNext('A', matrix, i, j)) {
-                        ArrayList<ArrayList<Integer>> SCoordinates = findNext('S', matrix, ACoordinate.get(0), ACoordinate.get(1));
-                        if (SCoordinates.size() == 2) {
-                            int SX1 = SCoordinates.getFirst().get(0);
-                            int SY1 = SCoordinates.getFirst().get(1);
-                            int SX2 = SCoordinates.get(1).get(0);
-                            int SY2 = SCoordinates.get(1).get(1);
-                            for(ArrayList<Integer> MCoordinate : findNext ('M', matrix, i, j)) {
-                                int MX = MCoordinate.get(0);
-                                int MY = MCoordinate.get(1);
-                                if (MX != i && MX != SX1 && MX != SX2 && MY != j && MY != SY1 && MY != SY2) {
-                                    total++;
+                if (row.get(j) == 'A') {
+                    ArrayList<ArrayList<Integer>> MCoordinates = findNext('M', matrix, i, j);
+                    if (MCoordinates.size() == 2) {
+                        int both = 0;
+                        for (ArrayList<Integer> MCoordinate : MCoordinates) {
+                            int SXDiff = i - MCoordinate.get(0);
+                            int SYDiff = j - MCoordinate.get(1);
+                            if (i + SXDiff >= 0 && i + SXDiff < matrix.size()) {
+                                if (j + SYDiff >= 0 && j + SYDiff < matrix.get(i).size()) {
+                                    if (matrix.get(i + SXDiff).get(j + SYDiff) == 'S' && both == 1) {
+                                        total++;
+                                    } else if (matrix.get(i + SXDiff).get(j + SYDiff) == 'S') {
+                                        both++;
+                                    }
                                 }
                             }
                         }
